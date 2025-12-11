@@ -16,12 +16,23 @@ async function getHotCoins() {
   const url =
     "https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-products";
 
-  const res = await axios.get(url);
+  const res = await axios.get(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+      "Content-Type": "application/json",
+      "Client-Type": "web",
+      "X-Requested-With": "XMLHttpRequest",
+    }
+  });
+
   const data = res.data.data;
 
-  // Extract only hot coins
-  const hot = data.filter(item => item.hot === true).map(item => item.asset);
+  if (!data) {
+    console.log("⚠ Binance returned no data");
+    return [];
+  }
 
+  const hot = data.filter(item => item.hot === true).map(item => item.asset);
   return hot;
 }
 
